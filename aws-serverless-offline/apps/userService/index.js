@@ -1,4 +1,4 @@
-module.exports.createUser = async (event, context, callback) => {
+const createUser = async (event, context, callback) => {
   return {
     statusCode: 200,
     body: JSON.stringify(
@@ -11,3 +11,5 @@ module.exports.createUser = async (event, context, callback) => {
     ),
   };
 };
+
+exports.handler = createUser;

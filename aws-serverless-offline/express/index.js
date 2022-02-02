@@ -4,7 +4,7 @@ const expressApp = require("express");
 
 const app = expressApp();
 
-// app.use(bodyParser.json({ strict: false }));
+app.use(bodyParser.json({ strict: false }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -17,4 +17,4 @@ app.post("/express/users/create", function (req, res) {
   res.json({ userId, name });
 });
 
-module.exports.handler = serverlessApp(app);
+exports.handler = serverlessApp(app);

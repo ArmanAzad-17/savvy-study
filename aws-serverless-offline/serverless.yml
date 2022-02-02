@@ -1,5 +1,4 @@
 service: aws-serverless-offline
-
 frameworkVersion: "3"
 
 provider:
@@ -12,21 +11,20 @@ plugins:
   - serverless-offline
 
 functions:
-  hello:
-    handler: handler.hello
+  simpleLamdas:
+    handler: LambdaFunctions/handler.hello
     events:
       - http:
           path: /hello
           method: get
-  simpleLamdas:
-    handler: apps/userService/handler.createUser
-    events:
-      - http:
-          path: /user/create
-          method: post
   express:
     handler: express/index.handler
     events:
       - http: ANY /express/
       - http: 'ANY /express/{proxy+}'
-
+  simpleGraphqlFunction:
+    handler: graphql/getUserGraphql.handler
+    events:
+      - http:
+          path: /graphql
+          method: get

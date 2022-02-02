@@ -325,46 +325,6 @@ function arrayFlatten (array, depth) {
 
 /***/ }),
 
-/***/ "../../../express/index.js":
-/*!*********************************!*\
-  !*** ../../../express/index.js ***!
-  \*********************************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! source-map-support/register */ "../../source-map-support/register.js");
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
-/* module decorator */ module = __webpack_require__.hmd(module);
-
-
-const serverlessApp = __webpack_require__(/*! serverless-http */ "../../serverless-http/serverless-http.js");
-
-const bodyParser = __webpack_require__(/*! body-parser */ "../../body-parser/index.js");
-
-const expressApp = __webpack_require__(/*! express */ "../../express/index.js");
-
-const app = expressApp();
-app.use(bodyParser.json({
-  strict: false
-}));
-app.get("/", function (req, res) {
-  res.send("Hello World!");
-});
-app.post("/users", function (req, res) {
-  const {
-    userId,
-    name
-  } = req.body;
-  res.json({
-    userId,
-    name
-  });
-});
-module.exports.handler = serverlessApp(app);
-
-/***/ }),
-
 /***/ "../../body-parser/index.js":
 /*!**********************************!*\
   !*** ../../body-parser/index.js ***!
@@ -28280,21 +28240,6 @@ module.exports = JSON.parse('{"100":"Continue","101":"Switching Protocols","102"
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/harmony module decorator */
-/******/ 	(() => {
-/******/ 		__webpack_require__.hmd = (module) => {
-/******/ 			module = Object.create(module);
-/******/ 			if (!module.children) module.children = [];
-/******/ 			Object.defineProperty(module, 'exports', {
-/******/ 				enumerable: true,
-/******/ 				set: () => {
-/******/ 					throw new Error('ES Modules may not assign module.exports or exports.*, Use ESM export syntax, instead: ' + module.id);
-/******/ 				}
-/******/ 			});
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
@@ -28321,15 +28266,50 @@ module.exports = JSON.parse('{"100":"Continue","101":"Switching Protocols","102"
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("../../../express/index.js");
-/******/ 	var __webpack_export_target__ = exports;
-/******/ 	for(var i in __webpack_exports__) __webpack_export_target__[i] = __webpack_exports__[i];
-/******/ 	if(__webpack_exports__.__esModule) Object.defineProperty(__webpack_export_target__, "__esModule", { value: true });
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!*********************************!*\
+  !*** ../../../express/index.js ***!
+  \*********************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! source-map-support/register */ "../../source-map-support/register.js");
+/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
+
+
+const serverlessApp = __webpack_require__(/*! serverless-http */ "../../serverless-http/serverless-http.js");
+
+const bodyParser = __webpack_require__(/*! body-parser */ "../../body-parser/index.js");
+
+const expressApp = __webpack_require__(/*! express */ "../../express/index.js");
+
+const app = expressApp();
+app.use(bodyParser.json({
+  strict: false
+}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.get("/express", function (req, res) {
+  res.send("Hello Express js World!");
+});
+app.post("/express/users/create", function (req, res) {
+  const {
+    userId,
+    name
+  } = req.body;
+  res.json({
+    userId,
+    name
+  });
+});
+exports.handler = serverlessApp(app);
+})();
+
+var __webpack_export_target__ = exports;
+for(var i in __webpack_exports__) __webpack_export_target__[i] = __webpack_exports__[i];
+if(__webpack_exports__.__esModule) Object.defineProperty(__webpack_export_target__, "__esModule", { value: true });
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
