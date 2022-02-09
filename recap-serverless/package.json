@@ -3,6 +3,7 @@
     "serverless-offline": "^8.4.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.1070.0",
     "graphql": "^16.3.0"
   }
 }

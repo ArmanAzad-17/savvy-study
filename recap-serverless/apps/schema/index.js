@@ -12,7 +12,7 @@ const{
 
 const schema = new GraphQLSchema({
     query:rootQuery,
-    mutation:rootMutation
+    mutation: rootMutation
 });
 
 

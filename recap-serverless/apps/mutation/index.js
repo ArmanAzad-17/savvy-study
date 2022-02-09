@@ -7,13 +7,52 @@ const {
     GraphQLObjectType,
 } = require('graphql');
 
-const {questionType} = require('../graphql-object-type');
+const {categoryType,questionType,messageType} = require('../graphql-object-type');
+const {createCategoryItem,updateCategoryItem,deleteCategoryItem} = require('../service/categoryService');
 
 
 const rootMutation = new GraphQLObjectType({
     name: 'rootMutation',
-    description: 'question root mutation',
+    description: 'root mutation',
     fields:{
+        insert_category:{
+            type: categoryType,
+            args: {
+                sk: {type: GraphQLString},
+                category_info: {type: GraphQLString},
+            },
+            resolve: (parent, args, context, info) => {
+                return createCategoryItem(args.sk,args.category_info).then(
+                    response => response
+                );
+            }
+
+        },
+        update_category:{
+            type: categoryType,
+            args: {
+                sk: {type: GraphQLString},
+                category_info: {type: GraphQLString},
+            },
+            resolve: (parent, args, context, info) => {
+                return updateCategoryItem(args.sk,args.category_info).then(
+                    response => response
+                );
+            }
+
+        },
+        delete_category:{
+            type: messageType,
+            args: {
+                sk: {type: GraphQLString}
+            },
+            resolve: (parent, args, context, info) => {
+                return deleteCategoryItem(args.sk).then(
+                    response => response
+                );
+            }
+
+        },
         insert_question:{
             type: questionType,
             args: {

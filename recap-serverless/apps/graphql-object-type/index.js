@@ -1,7 +1,10 @@
 const {
     GraphQLString,
     GraphQLInt,
-    GraphQLObjectType,   
+    GraphQLObjectType,
+    GraphQLList,
+    GraphQLScalarType,
+    GraphQLNonNull,   
 } = require('graphql');
 
 const questionType = new GraphQLObjectType({
@@ -20,6 +23,49 @@ const questionType = new GraphQLObjectType({
     }
 });
 
+var categoryInfo = new GraphQLScalarType({
+    name: 'categoryInfo',
+    serialize: categoryINFO,
+    parseValue: categoryINFO,
+    parseLiteral(ast) {
+      if (ast.kind === Kind.STRING) {
+        return categoryINFO(ast);
+      }
+      return 'null';
+    }
+  });
+  
+  function categoryINFO(value) {
+    return value;
+  }
+
+
+const categoryType = new GraphQLObjectType({
+    name: 'Category',
+    description: 'categoryInformation',
+    fields:{
+        sk:{
+            type: GraphQLString
+        },
+        category_info:{
+            type: categoryInfo,
+        },
+    }
+});
+
+const messageType = new GraphQLObjectType({
+    name: 'Message',
+    description: 'message',
+    fields:{
+        message:{
+            type: GraphQLString
+        },
+    }
+});
+
 module.exports = {
-    questionType
+    categoryInfo,
+    categoryType,
+    questionType,
+    messageType
 }
