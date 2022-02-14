@@ -5,7 +5,10 @@ const {
 const {
     GraphQLString,
     GraphQLObjectType,
+    GraphQLNonNull,
 } = require('graphql');
+
+var validator = require('validator');
 
 const {categoryType,questionType,messageType} = require('../graphql-object-type');
 const {createCategoryItem,updateCategoryItem,deleteCategoryItem} = require('../service/categoryService');
@@ -18,10 +21,16 @@ const rootMutation = new GraphQLObjectType({
         insert_category:{
             type: categoryType,
             args: {
-                sk: {type: GraphQLString},
-                category_info: {type: GraphQLString},
+                sk: {type: new GraphQLNonNull(GraphQLString)},
+                category_info: {type: new GraphQLNonNull(GraphQLString)},
             },
             resolve: (parent, args, context, info) => {
+                if(validator.isEmpty(args.category_info)){
+                    return {
+                        sk:args.sk,
+                        category_info:"Category info must be provided"
+                    }
+                }
                 return createCategoryItem(args.sk,args.category_info).then(
                     response => response
                 );

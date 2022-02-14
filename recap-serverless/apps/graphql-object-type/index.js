@@ -7,6 +7,26 @@ const {
     GraphQLNonNull,   
 } = require('graphql');
 
+const messageType = new GraphQLObjectType({
+    name: 'Message',
+    description: 'message',
+    fields:{
+        message:{
+            type: GraphQLString
+        },
+    }
+});
+
+// const validationMessageType = new GraphQLObjectType({
+//     name: 'ValidationMessage',
+//     description: 'validation message',
+//     fields:{
+//         message:{
+//             type: new GraphQLNonNull(new GraphQLList(GraphQLString))
+//         },
+//     }
+// });
+
 const questionType = new GraphQLObjectType({
     name: 'Question',
     description: 'questionInformation',
@@ -50,18 +70,12 @@ const categoryType = new GraphQLObjectType({
         category_info:{
             type: categoryInfo,
         },
+        validation_error:{
+            type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+        }
     }
 });
 
-const messageType = new GraphQLObjectType({
-    name: 'Message',
-    description: 'message',
-    fields:{
-        message:{
-            type: GraphQLString
-        },
-    }
-});
 
 module.exports = {
     categoryInfo,
