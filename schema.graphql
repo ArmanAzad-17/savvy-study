@@ -1,0 +1,32 @@
+type User {
+  user_id: String
+  user_email: String!
+  user_name: String
+}
+
+input UserCreateInput {
+  user_email: String!
+  user_name: String
+}
+
+input UserUpdateInput {
+  user_id: String
+  user_email: String!
+  user_name: String
+}
+
+type Mutation {
+  createTodo(input: UserCreateInput): User
+  updateTodo(input: UserUpdateInput): User
+  deleteTodo(user_id: String!): User
+}
+
+type Query {
+  listToDos: [User!]
+  getToDo(user_id: String): User
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

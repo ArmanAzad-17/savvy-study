@@ -1,124 +1,28 @@
-service: savvy-study
+service: savvy-service
 
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: dev
+  stage: test
   region: us-east-1
-  environment:
-    user_pool_id: { Ref: UserPool }
-    client_id: { Ref: UserClient }
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - cognito-idp:AdminInitiateAuth
-        - cognito-idp:AdminCreateUser
-        - cognito-idp:AdminSetUserPassword
-      Resource: "*"
 
-# plugins:
-#   - serverless-offline
+plugins:
+  - serverless-appsync-plugin
 
-# you can add statements to the Lambda function's IAM Role here
-#  iam:
-#    role:
-#      statements:
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:ListBucket"
-#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.js'
-#    - '!exclude-me-dir/**'
-#    - include-me.js
-#    - include-me-dir/**
-
+custom:
+  appSync: # appsync plugin configuration
+    name: ${self:service}-appsync-${self:provider.stage}
+    authenticationType: API_KEY # since we don't have user login for now
 
 functions:
-  loginUser:
-    handler: app/loginUser/handler.index
+  appSyncGraphqlResolvers:
+    handler: app/graphql.handler
+
+  getUsers:
+    handler: app/getUsers.handler
     events:
       - http:
-          path: user/login
-          method: post
-          cors: true
-  signUpUser:
-    handler: app/signUpUser/handler.index
-    events:
-      - http:
-          path: user/register
-          method: post
-          cors: true
-
-  privateAPI:
-      handler: app/getUser/handler.index
-      events:
-        - http:
-            path: user/private
-            method: post
-            cors: true
-            authorizer:
-              name: PrivateAuthorizer
-              type: COGNITO_USER_POOLS
-              arn:
-                Fn::GetAtt:
-                  - UserPool
-                  - Arn
-              claims:
-                - email
-
-resources:
-  Resources:
-    UserPool:
-      Type: AWS::Cognito::UserPool
-      Properties:
-        UserPoolName: serverless-auth-pool
-        Schema:
-          - Name: email
-            Required: true
-            Mutable: true
-        Policies:
-          PasswordPolicy:
-            MinimumLength: 6
-        AutoVerifiedAttributes: ["email"]
-
-    UserClient:
-      Type: AWS::Cognito::UserPoolClient
-      Properties:
-        ClientName: user-pool-ui
-        GenerateSecret: false
-        UserPoolId: { Ref: UserPool }
-        AccessTokenValidity: 5
-        IdTokenValidity: 5
-        ExplicitAuthFlows:
-          - "ADMIN_NO_SRP_AUTH"
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+          path: /users
+          method: GET
