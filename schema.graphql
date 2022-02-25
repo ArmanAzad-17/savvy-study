@@ -4,6 +4,10 @@ type User {
   user_name: String
 }
 
+type Message {
+  data: String!
+}
+
 input UserCreateInput {
   user_email: String!
   user_name: String
@@ -16,14 +20,15 @@ input UserUpdateInput {
 }
 
 type Mutation {
-  createTodo(input: UserCreateInput): User
-  updateTodo(input: UserUpdateInput): User
-  deleteTodo(user_id: String!): User
+  createUser(input: UserCreateInput): User
+  updateUser(input: UserUpdateInput): User
+  deleteUser(user_id: String!): User
 }
 
 type Query {
-  listToDos: [User!]
-  getToDo(user_id: String): User
+  listUsers: [User!]
+  getUser(user_id: String): User
+  getMessage: Message!
 }
 
 schema {

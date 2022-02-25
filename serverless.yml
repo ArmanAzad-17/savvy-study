@@ -12,9 +12,25 @@ plugins:
   - serverless-appsync-plugin
 
 custom:
-  appSync: # appsync plugin configuration
+  appSync:
     name: ${self:service}-appsync-${self:provider.stage}
     authenticationType: API_KEY # since we don't have user login for now
+    mappingTemplates:      
+      - type: Query
+        field: getMessage
+        dataSource: testAppsyncFunction
+        request: false
+        response: false
+      - type: Query
+        field: listUsers
+        dataSource: testAppsyncFunction
+        request: false
+        response: false
+    dataSources:        
+      - type: AWS_LAMBDA
+        name: testAppsyncFunction
+        config:
+          functionName: appSyncGraphqlResolvers
 
 functions:
   appSyncGraphqlResolvers:
@@ -26,3 +42,24 @@ functions:
       - http:
           path: /users
           method: GET
+
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: gamesTable
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK # partition key
+            KeyType: HASH
+          - AttributeName: SK # sort key
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
