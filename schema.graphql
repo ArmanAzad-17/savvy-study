@@ -1,34 +1,43 @@
-type User {
-  user_id: String
-  user_email: String!
-  user_name: String
+type User{
+    first_name: String
+    last_name: String
+    email: AWSEmail
+    phone_number: String
 }
 
-type Message {
-  data: String!
+type Token{
+    token_id: String! @aws_api_key
 }
 
-input UserCreateInput {
-  user_email: String!
-  user_name: String
+type Message{
+    errors: Boolean! @aws_api_key
+    message: String! @aws_api_key
 }
 
-input UserUpdateInput {
-  user_id: String
-  user_email: String!
-  user_name: String
+type Query{
+    getAllUser: User
+    getMyProfile: User
+    getSignIn(email: AWSEmail!, password: String!): Token @aws_api_key
 }
 
-type Mutation {
-  createUser(input: UserCreateInput): User
-  updateUser(input: UserUpdateInput): User
-  deleteUser(user_id: String!): User
+input UserInput{
+    first_name: String
+    last_name: String
+    email: AWSEmail!
+    phone_number: String
+    password: String!
 }
 
-type Query {
-  listUsers: [User!]
-  getUser(user_id: String): User
-  getMessage: Message!
+input UserUpdateInput{
+    first_name: String
+    last_name: String
+    phone_number: String
+    # password: String
+}
+
+type Mutation{
+    registerUser(input: UserInput): Message @aws_api_key
+    updateMyProfile(input: UserUpdateInput): User
 }
 
 schema {

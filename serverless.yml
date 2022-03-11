@@ -1,55 +1,52 @@
-service: savvy-service
+service: demo-savvy-app
 
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: test
+  stage: dev
   region: us-east-1
+  memorySize: 128
+  environment:
+    user_pool_id: { Ref: UserPool }
+    client_id: { Ref: UserClient }
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminInitiateAuth
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminSetUserPassword
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:Scan
+      Resource: "*"
 
 plugins:
   - serverless-appsync-plugin
-
-custom:
-  appSync:
-    name: ${self:service}-appsync-${self:provider.stage}
-    authenticationType: API_KEY # since we don't have user login for now
-    mappingTemplates:      
-      - type: Query
-        field: getMessage
-        dataSource: testAppsyncFunction
-        request: false
-        response: false
-      - type: Query
-        field: listUsers
-        dataSource: testAppsyncFunction
-        request: false
-        response: false
-    dataSources:        
-      - type: AWS_LAMBDA
-        name: testAppsyncFunction
-        config:
-          functionName: appSyncGraphqlResolvers
+  # - serverless-offline
 
 functions:
-  appSyncGraphqlResolvers:
-    handler: app/graphql.handler
+  demoSavvyApp:
+    handler: app/handler.savvyApp
 
-  getUsers:
-    handler: app/getUsers.handler
-    events:
-      - http:
-          path: /users
-          method: GET
+  # demoDynamoDbApi:
+  #   handler: restApi/handler.dynamoDbAppApi
+  #   events:
+  #     - http:
+  #         path: /users
+  #         method: ANY
 
 
 resources:
   Resources:
-    usersTable:
+    demoSavvyTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: gamesTable
+        TableName: demoSavvyTable
         AttributeDefinitions:
           - AttributeName: PK
             AttributeType: S
@@ -63,3 +60,73 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: serverless-auth-pool
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+          # - Name: id
+          #   Required: true
+          #   Mutable: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+        AutoVerifiedAttributes: ["email"]
+
+    UserClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: user-pool-ui
+        GenerateSecret: false
+        UserPoolId: { Ref: UserPool }
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        ExplicitAuthFlows:
+          - "ADMIN_NO_SRP_AUTH"
+
+
+
+custom:
+  appSync:
+    name: ${self:service}-appsync
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    userPoolConfig:
+      awsRegion: us-east-1
+      defaultAction: ALLOW
+      userPoolId: ${self:provider.environment.user_pool_id}
+    additionalAuthenticationProviders:
+      - authenticationType: API_KEY
+    mappingTemplates:      
+      - type: Query
+        field: getAllUser
+        dataSource: demoSavvyAppDataSource
+        request: false
+        response: false
+      - type: Query
+        field: getMyProfile
+        dataSource: demoSavvyAppDataSource
+        request: false
+        response: false
+      - type: Query
+        field: getSignIn
+        dataSource: demoSavvyAppDataSource
+        request: false
+        response: false
+      - type: Mutation
+        field: registerUser
+        dataSource: demoSavvyAppDataSource
+        request: false
+        response: false
+      - type: Mutation
+        field: updateMyProfile
+        dataSource: demoSavvyAppDataSource
+        request: false
+        response: false
+    dataSources:        
+      - type: AWS_LAMBDA
+        name: demoSavvyAppDataSource
+        config:
+          functionName: demoSavvyApp
